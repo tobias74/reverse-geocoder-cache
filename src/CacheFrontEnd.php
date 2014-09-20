@@ -6,23 +6,32 @@ class CacheFrontEnd
   public static $EARTH_RADIUS = 6371000;
   
   
-  public function __construct($keySize)
+  public function __construct($cacheBackend,$keySize,$prefix)
   {
+    $this->cacheBackend = $cacheBackend;
     $this->keySize = $keySize;
+    $this->prefix = $prefix;
   }
   
-  public function save($latitude,$longitude,$data)
+  public function set($latitude,$longitude,$data)
   {
-    
+    $key = $this->getCacheKey($latitude, $longitude);
+    $this->cacheBackend->set($key, $data);
   }
   
-  public function load($latitude,$longitude)
+  public function get($latitude,$longitude)
   {
-    
+    $key = $this->getCacheKey($latitude, $longitude);
+    return $this->cacheBackend->get($key);
   }
  
+  public function exists($latitude,$longitude)
+  {
+    $key = $this->getCacheKey($latitude, $longitude);
+    return $this->cacheBackend->get($key);
+  }
  
-  public function getCacheKey($latitude,$longitude)
+  protected function getCacheKey($latitude,$longitude)
   {
     $keySizeRadians = $this->getRadiansByDistance($this->keySize);
     
@@ -32,7 +41,7 @@ class CacheFrontEnd
     $keyLatitude = round($latitudeRadians / $this->getLatitudeKeyLength());
     $keyLongitude = round($longitudeRadians / $this->getLongitudeKeyLength($latitude));
     
-    return "key-slot-size-".$this->keySize."-lat-".$keyLatitude."-lng-".$keyLongitude."";
+    return $this->prefix."key-slot-size-".$this->keySize."-lat-".$keyLatitude."-lng-".$keyLongitude."";
   }
   
   
