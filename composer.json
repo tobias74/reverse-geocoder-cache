@@ -1,6 +1,6 @@
 {
     "name": "tobias74/reverse-geocoder-cache",
-    "description": "Cache for results of a reverse geocoder for PHP",
+    "description": "Cache results of a reverse geocoder in PHP",
     "require": {
         "php": ">=5.3.0"
     },
