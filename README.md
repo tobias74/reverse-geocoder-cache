@@ -2,7 +2,11 @@ reverse-geocoder-cache
 ======================
 
 Cache for reverse geocoding request
+-----------------------------------
 
+This "reverse geocoder cache" can be used to cache results of reverse geocoding services like Googles Places or Timezones and thereby reducing the amount of requests made to these services. The accuracy of this cache can be dynamically adjusted by setting the internally used key-size. The key-size determines the size of the tiles in which the results will be placed. Larger key-size will result in lower accuracy. Smaller key-size will make the cache consume more memory at increased accuracy.
+
+Example: Requesting the address of a given latitude-longitude while having a key-size of 1000 meters will most likely return a wrong address, since any previous request to a latitude-longitude-combination within a 1000 meter radius will already have been written into the according tile.
 
 
 ```php
