@@ -5,13 +5,21 @@ class CacheFrontEnd
 {
   public static $EARTH_RADIUS = 6371000;
   
-  
-  public function __construct($cacheBackend,$keySize,$prefix)
+  public function setCacheBackend($cacheBackend)
   {
     $this->cacheBackend = $cacheBackend;
+  }
+  
+  public function setKeySize($keySize)
+  {
     $this->keySize = $keySize;
+  }
+  
+  public function setPrefix($prefix)
+  {
     $this->prefix = $prefix;
   }
+  
   
   public function set($latitude,$longitude,$data)
   {

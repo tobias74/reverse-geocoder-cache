@@ -4,25 +4,31 @@ namespace ReverseGeocoderCache\Provider;
 class GooglePlacesProvider
 {
   
-  public function __construct($browserLanguage)
+  public function setApiKey($apiKey)
   {
-    $this->browserLanguage = $browserLanguage;
+    $this->apiKey = $apiKey;
   }
   
+  public function setLanguage($lang)
+  {
+    $this->language = $lang;
+  }
+
+  protected function getLanguage()
+  {
+    return $this->language;
+    //$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+    //return $lang;
+  }
+
   public function retrieveData($latitude, $longitude)
   {
-    $url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=".$latitude.",".$longitude."&language=".$this->getBrowserLanguage()."&sensor=true";
+    $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=".$latitude.",".$longitude."&language=".$this->getLanguage()."&sensor=true&key=".$this->apiKey;
     $dataString = @file_get_contents($url);
     $data = json_decode($dataString,true);
     return $data['results'][0]['formatted_address'];
     
   }
   
-  protected function getBrowserLanguage()
-  {
-    return $this->browserLanguage;
-    //$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-    //return $lang;
-  }
   
 }
