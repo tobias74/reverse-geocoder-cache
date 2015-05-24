@@ -18,7 +18,7 @@ spl_autoload_register(function ($class) {
 });
 
 
-class RedisCache
+class RedisCacheMimic
 {
   protected $hash=array();
   
@@ -33,8 +33,11 @@ class RedisCache
   }
 }
 
+$cacheBackend = new RedisCacheMimic();
 
-$cacheBackend = new RedisCache();
+
+
+// caching googles places
 
 $placesProvider = new \ReverseGeocoderCache\Provider\GooglePlacesProvider();
 $placesProvider->setLanguage('en');
@@ -48,8 +51,35 @@ $placesClient = new \ReverseGeocoderCache\CacheClient();
 $placesClient->setDataProvider($placesProvider);
 $placesClient->setCacheFrontEnd($cacheFrontEnd);
 
-echo "<br>";
-echo $placesClient->get(48.1333, 11.5668);
+echo '<html>';
+echo '<meta charset="UTF-8">';
+echo '<br>';
+
+//Albuquerque, N.M
+echo $placesClient->get(35.05,-106.39);
+
+
+
+
+// caching googles timezone
+
+$timezonesProvider = new \ReverseGeocoderCache\Provider\GoogleTimezonesProvider();
+
+$cacheFrontEnd = new \ReverseGeocoderCache\CacheFrontEnd();
+$cacheFrontEnd->setKeySize(1000);
+$cacheFrontEnd->setPrefix('TimezonesCache_');
+$cacheFrontEnd->setCacheBackend($cacheBackend);
+
+$timezonesClient = new \ReverseGeocoderCache\CacheClient();
+$timezonesClient->setDataProvider($timezonesProvider);
+$timezonesClient->setCacheFrontEnd($cacheFrontEnd);
+
+echo '<html>';
+echo '<meta charset="UTF-8">';
+echo '<br>';
+
+//Albuquerque, N.M
+echo $timezonesClient->get(35.05,-106.39);
 
 
 
