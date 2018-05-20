@@ -21,13 +21,37 @@ class CacheClient
   public function get($latitude, $longitude){
     if (!$this->cacheFrontEnd->exists($latitude,$longitude))
     {
-      $data = $this->retrieveData($latitude, $longitude);
+      try
+      {
+        $data = $this->retrieveData($latitude, $longitude);
+      }
+      catch (\ErrorException $e)
+      {
+        $data = 'place-error';        
+      }
+
       $this->cacheFrontEnd->set($latitude, $longitude, $data);
-      return $data;
+      
+      if ($data === 'place-error')
+      {
+        throw new \Exception('we did get a place-error from google');        
+      }
+      else
+      {
+        return $data;
+      }
     }
     else 
     {
-      return $this->cacheFrontEnd->get($latitude, $longitude);  
+      $value = $this->cacheFrontEnd->get($latitude, $longitude);
+      if ($value === 'place-error')
+      {
+        throw new \Exception('We had stored a place-error in the cache client');
+      }
+      else
+      {
+        return $value;
+      }
     }
   }
   
