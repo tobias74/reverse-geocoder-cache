@@ -21,16 +21,9 @@ class CacheClient
   public function get($latitude, $longitude){
     if (!$this->cacheFrontEnd->exists($latitude,$longitude))
     {
-      try
-      {
-        $data = $this->retrieveData($latitude, $longitude);
-        $this->cacheFrontEnd->set($latitude, $longitude, $data);
-        return $data;
-      }
-      catch (\ErrorException $e)
-      {
-        return "unknown location";
-      }
+      $data = $this->retrieveData($latitude, $longitude);
+      $this->cacheFrontEnd->set($latitude, $longitude, $data);
+      return $data;
     }
     else 
     {
