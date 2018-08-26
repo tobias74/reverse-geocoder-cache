@@ -29,8 +29,8 @@ class CacheFrontEnd
   {
     $key = $this->getCacheKey($latitude, $longitude);
     $this->cacheBackend->set($key, $data);
-    if(method_exists ($this->cacheBackend, 'expireAt') && isset($this->TTLInSeconds)) {
-        $this->cacheBackend->expireAt($key, time() + $this->TTLInSeconds);
+    if(method_exists($this->cacheBackend, 'expireAt') && isset($this->TTLInSeconds)) {
+        $this->cacheBackend->expireAt($key, time() + intval($this->TTLInSeconds));
     }
   }
   
@@ -39,7 +39,7 @@ class CacheFrontEnd
     $key = $this->getCacheKey($latitude, $longitude);
     return $this->cacheBackend->get($key);
   }
- 
+
   public function exists($latitude,$longitude)
   {
     $key = $this->getCacheKey($latitude, $longitude);
