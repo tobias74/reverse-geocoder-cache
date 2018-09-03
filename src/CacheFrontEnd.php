@@ -14,17 +14,24 @@ class CacheFrontEnd
   {
     $this->keySize = $keySize;
   }
-  
+
+  public function setDefaultKeyTTL($TTLInSeconds)
+  {
+    $this->TTLInSeconds = $TTLInSeconds;
+  }
+
   public function setPrefix($prefix)
   {
     $this->prefix = $prefix;
   }
-  
-  
+
   public function set($latitude,$longitude,$data)
   {
     $key = $this->getCacheKey($latitude, $longitude);
     $this->cacheBackend->set($key, $data);
+    if(method_exists($this->cacheBackend, 'expireAt') && isset($this->TTLInSeconds)) {
+        $this->cacheBackend->expireAt($key, time() + intval($this->TTLInSeconds));
+    }
   }
   
   public function get($latitude,$longitude)
@@ -32,7 +39,7 @@ class CacheFrontEnd
     $key = $this->getCacheKey($latitude, $longitude);
     return $this->cacheBackend->get($key);
   }
- 
+
   public function exists($latitude,$longitude)
   {
     $key = $this->getCacheKey($latitude, $longitude);
