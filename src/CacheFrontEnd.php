@@ -52,44 +52,22 @@ class CacheFrontEnd
 
     protected function getCacheKey($latitude, $longitude)
     {
-        $keySizeRadians = $this->getRadiansByDistance($this->keySize);
+        $latitudeGrid = $this->keySize / 111111;
+        $longitudeGrid = $this->keySize / (111111 * $this->cos($latitude));
 
-        $latitudeRadians = $this->getRadiansByDegree($latitude);
-        $longitudeRadians = $this->getRadiansByDegree($longitude);
-
-        $keyLatitude = round($latitudeRadians / $this->getLatitudeKeyLength());
-        $keyLongitude = round($longitudeRadians / $this->getLongitudeKeyLength($latitude));
+        $keyLatitude = round($latitude / $latitudeGrid);
+        $keyLongitude = round($longitude / $longitudeGrid);
 
         return $this->prefix.'key-slot-size-'.$this->keySize.'_lat_'.$keyLatitude.'_lng_'.$keyLongitude.'';
     }
 
-    protected function getRadiansKeySize()
+    protected function cos($degree)
     {
-        return $this->getRadiansByDistance($this->keySize);
+        return cos($this->getRadiansByDegree($degree));
     }
 
     protected function getRadiansByDegree($degree)
     {
         return (M_PI / 180) * $degree;
-    }
-
-    protected function getRadiansByDistance($distance)
-    {
-        return $distance / self::$EARTH_RADIUS;
-    }
-
-    protected function getLatitudeKeyLength()
-    {
-        return $this->getRadiansKeySize();
-    }
-
-    protected function getLongitudeKeyLength($latitude)
-    {
-        $operand = (2 * sin($this->getRadiansKeySize() / 2)) / cos($this->getRadiansByDegree($latitude));
-        if ($operand > M_PI / 2) {
-            return 1;
-        } else {
-            return asin($operand);
-        }
     }
 }

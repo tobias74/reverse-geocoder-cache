@@ -22,19 +22,25 @@ final class TileTest extends TestCase
     public function testSameTileHit(): void
     {
         $frontEnd = new \ReverseGeocoderCache\CacheFrontEnd();
-        $frontEnd->setKeySize(2000);
+        $frontEnd->setKeySize(1500);
         $getCacheKeyMethod = $this->getMethod('getCacheKey');
 
-        $cacheKeyBridge_A = $getCacheKeyMethod->invokeArgs($frontEnd, array(40.7080078, -73.9998796));
-        $cacheKeyBridge_B = $getCacheKeyMethod->invokeArgs($frontEnd, array(40.7037924, -73.9942927));
+        $cacheKeyBridge_A1 = $getCacheKeyMethod->invokeArgs($frontEnd, array(40.7119693, -74.0062215));
+        $cacheKeyBridge_A2 = $getCacheKeyMethod->invokeArgs($frontEnd, array(40.7080078, -73.9998796));
+        $cacheKeyBridge_B1 = $getCacheKeyMethod->invokeArgs($frontEnd, array(40.7037924, -73.9942927));
+        $cacheKeyBridge_B2 = $getCacheKeyMethod->invokeArgs($frontEnd, array(40.696042, -73.9849284));
 
-        $this->assertEquals($cacheKeyBridge_A, $cacheKeyBridge_B);
+        $keys = [$cacheKeyBridge_A1, $cacheKeyBridge_A2, $cacheKeyBridge_B1, $cacheKeyBridge_B2];
+        print_r($keys);
+        $uniqueKeys = array_unique($keys);
+
+        $this->assertTrue(count($uniqueKeys) <= 2);
     }
 
     public function testDifferentTileHit(): void
     {
         $frontEnd = new \ReverseGeocoderCache\CacheFrontEnd();
-        $frontEnd->setKeySize(1000);
+        $frontEnd->setKeySize(500);
         $getCacheKeyMethod = $this->getMethod('getCacheKey');
 
         $cacheKeyBridge_A = $getCacheKeyMethod->invokeArgs($frontEnd, array(40.7080078, -73.9998796));
