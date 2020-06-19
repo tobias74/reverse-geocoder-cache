@@ -31,7 +31,6 @@ final class TileTest extends TestCase
         $cacheKeyBridge_B2 = $getCacheKeyMethod->invokeArgs($frontEnd, array(40.696042, -73.9849284));
 
         $keys = [$cacheKeyBridge_A1, $cacheKeyBridge_A2, $cacheKeyBridge_B1, $cacheKeyBridge_B2];
-        print_r($keys);
         $uniqueKeys = array_unique($keys);
 
         $this->assertTrue(count($uniqueKeys) <= 2);
