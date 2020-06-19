@@ -4,7 +4,6 @@ namespace ReverseGeocoderCache;
 
 class CacheFrontEnd
 {
-    public static $EARTH_RADIUS = 6371000;
     protected $prefix = 'CACHE_';
 
     public function setCacheBackend($cacheBackend)
