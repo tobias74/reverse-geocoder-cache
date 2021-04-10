@@ -17,12 +17,42 @@ class CacheClient
         $this->cacheFrontEnd = $frontEnd;
     }
 
+    public function setProfiler($val)
+    {
+        $this->profiler = $val;
+    }
+
+    protected function getProfiler()
+    {
+        return $this->profiler;
+    }
+
+    protected function startTimer($name)
+    {
+        $profiler = $this->getProfiler();
+        if ($profiler) {
+            return $profiler->startTimer($name);
+        } else {
+            $obj = new stdClass();
+            $obj->stop = function () {
+            };
+
+            return $obj;
+        }
+    }
+
     public function get($latitude, $longitude)
     {
-        if (!$this->cacheFrontEnd->exists($latitude, $longitude)) {
-            return $this->produceData($latitude, $longitude);
+        $timer = $this->startTimer('cache hit retrieval');
+        $cachedValue = $this->getData($latitude, $longitude);
+        $timer->stop();
+
+        if (!$cachedValue) {
+            $value = $this->produceData($latitude, $longitude);
+
+            return $value;
         } else {
-            $value = $this->getData($latitude, $longitude);
+            $value = $cachedValue;
             if ('error' === $value['status']) {
                 if ($value['timestamp'] + 3600 < time()) {
                     return $this->produceData($latitude, $longitude);
@@ -37,21 +67,28 @@ class CacheClient
 
     protected function produceData($latitude, $longitude)
     {
+        $timer = $this->startTimer('producing data for geocache');
+
         try {
             $data = $this->retrieveData($latitude, $longitude);
         } catch (\ErrorException $e) {
             $this->setData($latitude, $longitude, array(
-          'status' => 'error',
-          'timestamp' => time(),
-        ));
-
+              'status' => 'error',
+              'timestamp' => time(),
+            ));
             throw new \Exception('we did get a place-error from google');
+        } finally {
+            $timer->stop();
         }
 
+        $timer = $this->startTimer('storing data in geocache');
+
         $this->setData($latitude, $longitude, array(
-        'status' => 'ok',
-        'payload' => $data,
-      ));
+            'status' => 'ok',
+            'payload' => $data,
+        ));
+
+        $timer->stop();
 
         return $data;
     }
