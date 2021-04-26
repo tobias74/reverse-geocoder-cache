@@ -34,8 +34,10 @@ class CacheClient
         if ($profiler) {
             return $profiler->startTimer($name);
         } else {
-            $obj = new stdClass();
-            $obj->stop = function () {
+            $obj = new class() {
+                public function stop()
+                {
+                }
             };
 
             return $obj;
