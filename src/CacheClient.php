@@ -6,6 +6,7 @@ class CacheClient
 {
     protected $cacheFrontEnd = false;
     protected $dataProvider = false;
+    protected $profiler = false;
 
     public function setDataProvider($dataProvider)
     {
